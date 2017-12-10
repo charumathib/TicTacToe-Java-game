@@ -19,4 +19,7 @@ public class Player extends JPanel
         g.setFont(font);
         g.drawString(letter, 500/3 * column - 100, 500/3 * row - 50);
     }
+    public void setColor(Color c){
+        this.color = c;
+    }
 }

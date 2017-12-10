@@ -12,29 +12,41 @@ public class Board extends JPanel
     String X = "X";
     String O = "O" ;
     boolean alreadyPrinted = false;
+    long endtime = 0;
+    long startTime = System.nanoTime();
+    boolean changeColor = true;
     //create a 3X3 grid
     public void paint(Graphics g){
         super.paintComponent(g);
-
         createGrid(g);
-
         drawPlayersInGrid(g);
-
         if(checkForWin()){
             showEndScreen(g);
+        }else if(checkForDraw()){
+            showDrawScreen(g);
         }
     }
 
-    private void showEndScreen(Graphics g) { 
-        g.setColor(Color.black);
-        g.fillRect(0, 0, 500, 500);
+    public void showEndScreen(Graphics g) { 
         g.setColor(Color.cyan);
         Font font = new Font("Apple Chancery", Font.BOLD, 30);
         g.setFont(font);
         g.drawString("GAME OVER: " + (hasWon(X) ? X : O) + " WINS", 85, 250);
+
     }
 
-    private void drawPlayersInGrid(Graphics g) { 
+    public void blink(String xo, Color c){
+        for(int i = 0; i < 3; i++){
+            for(int j = 0; j < 3; j++){
+                if(players[i][j].letter.equals(xo)){
+                    players[i][j].setColor(c);
+                }
+            }
+        }
+
+    }
+
+    public void drawPlayersInGrid(Graphics g) { 
         for(int i = 0; i < 3; i++){
             for(int j = 0; j < 3; j++){
                 players[i][j].draw(g);
@@ -43,7 +55,7 @@ public class Board extends JPanel
 
     }
 
-    private void createGrid(Graphics g) { 
+    public void createGrid(Graphics g) { 
         setBackground(Color.black);
         g.setColor(Color.magenta);
         g.fillRect(500/3 - 5, 0, 10, 500);
@@ -52,14 +64,12 @@ public class Board extends JPanel
         g.fillRect(0, (500/3)*2, 500, 10);  
     }
 
-    
-    private void resetGame() { 
+    public void resetGame() { 
         instantiatePlayers();
         in.reset();
         isX = false ; 
     }
-    
-    
+
     public void input(){
         if (checkForWin()) { 
             System.out.println("\u000c");
@@ -71,7 +81,19 @@ public class Board extends JPanel
             }else { 
                 in.close();
                 System.exit(0);
-            }
+            } 
+
+        }else if(checkForDraw()){
+            System.out.println("\u000c");
+            System.out.println("THAT WAS A DRAW...\n\n");
+            System.out.print("DO YOU WANT TO PLAY AGAIN (Y/N)?   ");
+            String option = in.next();
+            if (option.startsWith("Y") || option.startsWith("y")) { 
+                resetGame();
+            }else { 
+                in.close();
+                System.exit(0);
+            } 
         }else { 
             System.out.println("\u000c");
             String xo = isX ? X : O ; 
@@ -98,7 +120,7 @@ public class Board extends JPanel
 
     }
 
-    private boolean inputInvalid(int i) { 
+    public boolean inputInvalid(int i) { 
         return ( i < 1 || i > 3)  ;
     }
 
@@ -114,11 +136,11 @@ public class Board extends JPanel
         return hasWon(X) || hasWon(O);
     }
 
-    private boolean hasWon(String xo) { 
+    public boolean hasWon(String xo) { 
         return rowColumnCheck(xo) || diagonalCheck(xo);
     }
 
-    private boolean rowCheck(String xo) { 
+    public boolean rowCheck(String xo) { 
         boolean result = false ; 
         for (int row = 0 ; row < 3 ; row ++ ) {
             result = true ; 
@@ -131,7 +153,7 @@ public class Board extends JPanel
         return result ; 
     }
 
-    private boolean columnCheck( String xo) { 
+    public boolean columnCheck( String xo) { 
         boolean result = false; 
         for ( int col = 0 ; col < 3 ; col ++ ) {
             result = true ; 
@@ -144,13 +166,13 @@ public class Board extends JPanel
         return result ; 
     }
 
-    private boolean rowColumnCheck(String xo) { 
+    public boolean rowColumnCheck(String xo) { 
         boolean result; 
         result = rowCheck(xo) || columnCheck(xo);
         return result ; 
     }
 
-    private boolean diagonalCheck(String xo) { 
+    public boolean diagonalCheck(String xo) { 
         boolean result = true ; 
         for ( int i = 0; i < 3 ; i ++ ) { 
             result = result && players[i][i].letter.equals(xo);
@@ -165,6 +187,25 @@ public class Board extends JPanel
             counter--;
         }
         return result ; 
+
+    }
+
+    public boolean checkForDraw(){
+        int counter = 0;
+        for(int i = 0; i < 3; i++){
+            for(int j = 0; j < 3; j++){
+                if(players[i][j].row != -100){
+                    counter++;
+                }
+            }
+        }
+        return counter == 9;
+    }
+    
+    public void showDrawScreen(Graphics g){
+        g.setColor(Color.red);
+        Font font = new Font("Apple Chancery", Font.BOLD, 30);
+        g.setFont(font);
+        g.drawString("GAME OVER : DRAW", 85, 250);
     }
 }
-
