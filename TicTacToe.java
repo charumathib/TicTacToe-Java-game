@@ -9,6 +9,7 @@ public class TicTacToe
         theGUI.setSize(500, 500);
         theGUI.setResizable(false);
         theGUI.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        theGUI.setTitle("TicTacToe");
         Container pane = theGUI.getContentPane();
         Board b = new Board();
         pane.add(b);

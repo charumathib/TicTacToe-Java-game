@@ -203,7 +203,7 @@ public class Board extends JPanel
     }
     
     public void showDrawScreen(Graphics g){
-        g.setColor(Color.red);
+        g.setColor(Color.white);
         Font font = new Font("Apple Chancery", Font.BOLD, 30);
         g.setFont(font);
         g.drawString("GAME OVER : DRAW", 85, 250);
